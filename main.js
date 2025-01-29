@@ -53,60 +53,60 @@ const hidePopupMenu = () => {
 
 // Function to add a child node
 const addChildNode = (parentNode) => {
-// Create a new child node
-const childNode = document.createElement('div');
-childNode.classList.add('node');
-childNode.dataset.name = 'New Node';
-childNode.dataset.value = '';
-childNode.dataset.color = '#3b3b3b';
-childNode.dataset.font = 'Arial';
-childNode.dataset.fontsize = '14';
-childNode.innerHTML = `
-<span class="node-name">New Node</span>
-<span class="node-value"></span>
-<div class="popup-menu">
-    <button class="add-child">Add Child</button>
-    <button class="delete-node">Delete Node</button>
-    <button class="edit-node">Edit Node</button>
-</div>
-`;
+    // Create a new child node
+    const childNode = document.createElement('div');
+    childNode.classList.add('node');
+    childNode.dataset.name = 'New Node';
+    childNode.dataset.value = '';
+    childNode.dataset.color = '#3b3b3b';
+    childNode.dataset.font = 'Arial';
+    childNode.dataset.fontsize = '14';
+    childNode.innerHTML = `
+        <span class="node-name">New Node</span>
+        <span class="node-value"></span>
+        <div class="popup-menu">
+            <button class="add-child">Add Child</button>
+            <button class="delete-node">Delete Node</button>
+            <button class="edit-node">Edit Node</button>
+        </div>
+    `;
 
-// Append the new child node to the tree
-tree.appendChild(childNode);
+    // Append the new child node to the tree
+    tree.appendChild(childNode);
 
-// Get all current children of the parent node
-const currentChildren = Array.from(tree.querySelectorAll(`.node[data-parent-id="${parentNode.id}"]`));
+    // Get all current children of the parent node
+    const currentChildren = Array.from(tree.querySelectorAll(`.node[data-parent-id="${parentNode.id}"]`));
 
-// Assign parent ID to the new child node
-childNode.dataset.parentId = parentNode.id;
+    // Assign parent ID to the new child node
+    childNode.dataset.parentId = parentNode.id;
 
-// Add the new child to the list of current children
-currentChildren.push(childNode);
+    // Add the new child to the list of current children
+    currentChildren.push(childNode);
 
-// Get parent and tree bounding rectangles
-const parentRect = parentNode.getBoundingClientRect();
-const treeRect = tree.getBoundingClientRect();
+    // Get parent and tree bounding rectangles
+    const parentRect = parentNode.getBoundingClientRect();
+    const treeRect = tree.getBoundingClientRect();
 
-// Spacing configuration
-const verticalSpacing = 50; // Distance from parent node to child node
-const horizontalSpacing = 180; // Distance between child nodes
+    // Spacing configuration
+    const verticalSpacing = 50; // Distance from parent node to child node
+    const horizontalSpacing = 180; // Distance between child nodes
 
-// Calculate the starting X position for the first child
-const totalChildrenWidth = (currentChildren.length - 1) * horizontalSpacing;
-const startX = parentRect.left - treeRect.left + parentRect.width / 2 - totalChildrenWidth / 2;
+    // Calculate the starting X position for the first child
+    const totalChildrenWidth = (currentChildren.length - 1) * horizontalSpacing;
+    const startX = parentRect.left - treeRect.left + parentRect.width / 2 - totalChildrenWidth / 2;
 
-// Position each child node
-currentChildren.forEach((child, index) => {
-const childX = startX + index * horizontalSpacing;
-const childY = parentRect.top - treeRect.top + parentRect.height + verticalSpacing;
+    // Position each child node
+    currentChildren.forEach((child, index) => {
+        const childX = startX + index * horizontalSpacing;
+        const childY = parentRect.top - treeRect.top + parentRect.height + verticalSpacing;
 
-child.style.position = 'absolute';
-child.style.left = `${childX}px`;
-child.style.top = `${childY}px`;
-});
+        child.style.position = 'absolute';
+        child.style.left = `${childX}px`;
+        child.style.top = `${childY}px`;
+    });
 
-// Add listeners for the new child node's popup menu
-addPopupListeners(childNode);
+    // Add listeners for the new child node's popup menu
+    addPopupListeners(childNode);
 };
 
 // Add popup menu listeners to the node (Add Child, Edit Node, Delete Node)
@@ -160,3 +160,32 @@ document.getElementById('save-changes').addEventListener('click', () => {
 
 // Initialize the root node's popup listeners
 addPopupListeners(document.getElementById('root-node'));
+
+// Reset Tree functionality
+document.getElementById('reset-tree').addEventListener('click', () => {
+    // Remove all nodes except the root node
+    const allNodes = document.querySelectorAll('.node');
+    allNodes.forEach(node => {
+        if (node.id !== 'root-node') {
+            node.remove();
+        }
+    });
+
+    // Reset the root node properties if needed
+    const rootNode = document.getElementById('root-node');
+    rootNode.dataset.name = 'Root Node';
+    rootNode.dataset.value = '0';
+    rootNode.dataset.color = '#3b3b3b';
+    rootNode.dataset.font = 'Arial';
+    rootNode.dataset.fontsize = '14';
+
+    rootNode.querySelector('.node-name').textContent = 'Root Node';
+    rootNode.querySelector('.node-value').textContent = '';
+    rootNode.style.backgroundColor = '#3b3b3b';
+    rootNode.style.fontFamily = 'Arial';
+    rootNode.style.fontSize = '14px';
+
+    // Optionally reset the zoom
+    scale = 1;
+    tree.style.transform = `scale(${scale})`;
+});
